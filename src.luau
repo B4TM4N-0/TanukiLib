@@ -5071,7 +5071,4 @@ TanukiLib.Dialog = function(self, Data)
 end
 
 getgenv().TanukiLib = TanukiLib
-
-end
-
 return TanukiLib
