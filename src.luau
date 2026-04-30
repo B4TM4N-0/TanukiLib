@@ -545,7 +545,7 @@ TanukiLib.Window = function(self, Data)
     
     local src = TanukiLib.Themes[Window.Theme or TanukiLib.CurrentTheme] or {}
 	for k, v in pairs(src) do
-	    Theme[k] = v
+		Window.Theme[k] = v
 	end
     
 	local Items = {}
