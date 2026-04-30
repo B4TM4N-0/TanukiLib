@@ -43,18 +43,6 @@ TanukiLib.SetTheme = function(self, name)
 	end
 end
 
-TanukiLib.BindTheme = function(self, instance, property, key)
-	local theme = self:GetTheme()
-	instance[property] = theme[key]
-
-	table.insert(self.themeCallbacks, function()
-		local updated = self:GetTheme()
-		if instance and instance.Parent then
-			instance[property] = updated[key]
-		end
-	end)
-end
-
 TanukiLib:AddTheme({
 	Name = "Tanuki",
 	Accent = Color3.fromRGB(101, 75, 50),
