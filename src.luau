@@ -889,6 +889,19 @@ TanukiLib.Window = function(self, Data)
 	    Parent = Items["ScrollTab"]
 	})
 	
+	Items["Body"] = Create("Frame", {
+	    Name = "Body",
+	    Size = UDim2.new(1-0.32, 0, 1, -50),
+	    Position = UDim2.new(0.32, 0, 0, 50),
+	    BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+	    BorderColor3 = Color3.fromRGB(0, 0, 0),
+	    BorderSizePixel = 0,
+	    Active = true,
+	    BackgroundTransparency = 1,
+	    ClipsDescendants = true,
+	    Parent = Items["Base"]
+	})
+	
 	
 	Window.Items = Items
 	
@@ -1172,15 +1185,15 @@ TanukiLib.Page = function(self, Data)
 	
 	Items["Elements"] = Create("Frame", {
 	    Name = "Elements",
-	    Size = UDim2.new(1-0.32, 0, 1, -50),
-	    Position = UDim2.new(0.32, 0, 0, 50),
+	    Size = UDim2.new(1, 0, 1, 0),
+	    Position = UDim2.new(0, 0, 0, 0),
 	    BackgroundColor3 = Color3.fromRGB(255, 255, 255),
 	    BorderColor3 = Color3.fromRGB(0, 0, 0),
 	    BorderSizePixel = 0,
 	    Active = true,
 	    BackgroundTransparency = 1,
 	    ClipsDescendants = true,
-	    Parent = Page.Window.Items["Base"]
+	    Parent = Page.Window.Items["Body"]
 	})
 	
 	Items["ElementsPadding"] = Create("UIPadding", {
@@ -5071,4 +5084,5 @@ TanukiLib.Dialog = function(self, Data)
 end
 
 getgenv().TanukiLib = TanukiLib
+
 return TanukiLib
