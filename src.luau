@@ -545,7 +545,7 @@ TanukiLib.Window = function(self, Data)
     
     local src = TanukiLib.Themes[Window.Theme or TanukiLib.CurrentTheme] or {}
 	for k, v in pairs(src) do
-		Window.Theme[k] = v
+	    Theme[k] = v
 	end
     
 	local Items = {}
@@ -5290,7 +5290,9 @@ SwordSection:Colorpicker({
 
 MainPage:Select()
 end
+Demo()
 
+TanukiLib.setThemed = setThemed
 getgenv().TanukiLib = TanukiLib
 
 return TanukiLib
