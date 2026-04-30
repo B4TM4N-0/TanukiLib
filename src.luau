@@ -1328,9 +1328,9 @@ TanukiLib.Divider = function(self, Data)
 		Parent = DividerFrame
 	})
 	
-	Items["SectionUICorner"] = Create("UICorner", {
+	Create("UICorner", {
 	    Name = "SectionUICorner",
-	    Parent = Items["Line"]
+	    Parent = Line
 	})
 
 	setThemed(Line, "BackgroundColor3", "Outline")
