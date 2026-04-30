@@ -71,12 +71,12 @@ TanukiLib:AddTheme({
 	Name = "Light",
 	Accent = Color3.fromRGB(210, 210, 218),
 	Background = Color3.fromRGB(245, 245, 245),
-	Surface = Color3.fromRGB(30, 30, 40),
-	Outline = Color3.fromRGB(0, 0, 0),
+	Surface = Color3.fromRGB(255, 255, 255),
+	Outline = Color3.fromRGB(220, 220, 220),
 	Text = Color3.fromRGB(20, 20, 20),
-	Placeholder = Color3.fromRGB(100, 100, 110),
-	Button = Color3.fromRGB(160, 160, 170),
-	Icon = Color3.fromRGB(60, 60, 70),
+	Placeholder = Color3.fromRGB(130, 130, 130),
+	Button = Color3.fromRGB(235, 235, 235),
+	Icon = Color3.fromRGB(80, 80, 80),
 })
 
 local TweenService = GetService("TweenService")
@@ -871,6 +871,7 @@ TanukiLib.Window = function(self, Data)
 		ScrollBarThickness = 1,
 		TopImage = "",
 	    ScrollingEnabled = true,
+		BorderSizePixel = 0,
 	    BackgroundTransparency = 1,
 	    Parent = Items["Sidebar"]
 	})
@@ -1298,6 +1299,41 @@ TanukiLib.Page = function(self, Data)
 			
 	Page.Window.Pages[#Page.Window.Pages + 1] = Page
 	return setmetatable(Page, TanukiLib.Pages)
+end
+
+TanukiLib.Divider = function(self, Data)
+    Data = Data or {}
+    
+	local Divider = {
+	    Window = self,
+	}
+	
+	local DividerFrame = Create("Frame", {
+		Name = "TabDivider",
+		Size = UDim2.new(1, -21, 0, 12),
+		Position = UDim2.fromScale(0.5, 0),
+		AnchorPoint = Vector2.new(0.5, 0),
+		BackgroundTransparency = 1,
+		BorderSizePixel = 0,
+		Parent = Divider.Window.Items["ScrollTab"]
+	})
+
+	local Line = Create("Frame", {
+		Name = "Line",
+		Size = UDim2.new(1, 0, 0, 2),
+		Position = UDim2.fromScale(0.5, 0.5),
+		AnchorPoint = Vector2.new(0.5, 0.5),
+		BackgroundTransparency = 0.85,
+		BorderSizePixel = 0,
+		Parent = DividerFrame
+	})
+	
+	Items["SectionUICorner"] = Create("UICorner", {
+	    Name = "SectionUICorner",
+	    Parent = Items["Line"]
+	})
+
+	setThemed(Line, "BackgroundColor3", "Outline")
 end
 
 TanukiLib.Pages.Section = function(self, Data)
@@ -5100,6 +5136,8 @@ local MainPage = Window:Page({
     Name = "Main",
     --Icon = "home",
 })
+
+Window:Divider()
 
 local CombatPage = Window:Page({
     Name = "Combat",
