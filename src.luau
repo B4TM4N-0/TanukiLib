@@ -59,7 +59,7 @@ TanukiLib:AddTheme({
 	Name = "Dark",
 	Accent = Color3.fromRGB(24, 24, 27),
 	Background = Color3.fromRGB(10,10,10),
-	Surface = Color3.fromRGB(255, 255, 255),
+	Surface = Color3.fromRGB(18,18,18),
 	Outline = Color3.fromRGB(255, 255, 255),
 	Text = Color3.fromRGB(255, 255, 255),
 	Placeholder = Color3.fromRGB(122, 122, 122),
