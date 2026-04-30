@@ -3,12 +3,18 @@ local TanukiLib = {
 	Pages = { },
     Sections = { },
 	
-	Folder = "Abcdefg",
+	Folders = "abcdefg",
 	
 	Themes = {},
 	CurrentTheme = "Light",
 	themeCallbacks = {},
 }
+
+for Index, Value in TanukiLib.Folders do 
+    if not isfolder(Value) then
+        makefolder(Value)
+    end
+end
 
 GetService = function(service)
 	return cloneref and cloneref(game:GetService(service)) or game:GetService(service)
@@ -72,7 +78,7 @@ TanukiLib:AddTheme({
 	Accent = Color3.fromRGB(210, 210, 218),
 	Background = Color3.fromRGB(245, 245, 245),
 	Surface = Color3.fromRGB(255, 255, 255),
-	Outline = Color3.fromRGB(220, 220, 220),
+	Outline = Color3.fromRGB(170,170,170),
 	Text = Color3.fromRGB(20, 20, 20),
 	Placeholder = Color3.fromRGB(130, 130, 130),
 	Button = Color3.fromRGB(235, 235, 235),
