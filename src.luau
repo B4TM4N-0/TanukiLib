@@ -1050,11 +1050,12 @@ TanukiLib.Window = function(self, Data)
 	        Tween(Items["Sidebar"], TweenInfo.new(0.2, TweenSettings.EasingStyle), {
 	            Size = TweenSettings.SidebarExpand
 	        }):Play()
+			Tween(Items["Body"], TweenInfo.new(0.2, TweenSettings.EasingStyle), {
+                Size = TweenSettings.ElementsExpand.Size,
+                Position = TweenSettings.ElementsExpand.Position
+            }):Play()
 	        for _, p in ipairs(Window.Pages) do
-	            Tween(p.Items["Elements"], TweenInfo.new(0.2, TweenSettings.EasingStyle), {
-	                Size = TweenSettings.ElementsExpand.Size,
-	                Position = TweenSettings.ElementsExpand.Position
-	            }):Play()
+	            
 	            local pad = p.Items["InactiveUIPadding"]
 	            pad.PaddingLeft = UDim.new(0, 24)
 	            pad.PaddingRight = UDim.new(0, 35)
@@ -1066,11 +1067,12 @@ TanukiLib.Window = function(self, Data)
 	        Tween(Items["Sidebar"], TweenInfo.new(0.2, TweenSettings.EasingStyle), {
 	            Size = TweenSettings.SidebarCollapse
 	        }):Play()
+		Tween(Items["Body"], TweenInfo.new(0.2, TweenSettings.EasingStyle), {
+                Size = TweenSettings.ElementsCollapse.Size,
+                Position = TweenSettings.ElementsCollapse.Position
+            }):Play()
 	        for _, p in ipairs(Window.Pages) do
-	            Tween(p.Items["Elements"], TweenInfo.new(0.2, TweenSettings.EasingStyle), {
-	                Size = TweenSettings.ElementsCollapse.Size,
-	                Position = TweenSettings.ElementsCollapse.Position
-	            }):Play()
+	            
 	            local pad = p.Items["InactiveUIPadding"]
 	            pad.PaddingLeft = UDim.new(0, 0)
 	            pad.PaddingRight = UDim.new(0, 0)
@@ -5097,6 +5099,208 @@ TanukiLib.Dialog = function(self, Data)
 	end)
 
     return Dialog
+end
+
+local function Demo()
+local Window = TanukiLib:Window({
+    Name = "Fe All Emote",
+    SubName = "Animations",
+    Icon = "lucide/house",
+})
+
+local MainPage = Window:Page({
+    Name = "Main",
+    --Icon = "home",
+})
+
+local CombatPage = Window:Page({
+    Name = "Combat",
+    --Icon = "sword",
+})
+
+local MainSection = MainPage:Section({
+    Name = "General",
+})
+
+local SwordSection = CombatPage:Section({
+    Name = "General",
+})
+
+MainSection:Header({ Name = "My Header Title" })
+
+MainSection:Button({
+    Name = "Do Something",
+    Callback = function()
+        Window:Dialog({
+				Title = "HH",
+				Description = "Maclib Demo",
+				Buttons = {
+					{
+						Name = "Confirm",
+						Callback = function()
+							print("Confirmed!")
+						end,
+					},
+					{
+						Name = "Cancel"
+					}
+				}
+			})
+    end
+})
+
+MainSection:Button({
+    Name = "Switch theme to white",
+    Callback = function()
+        TanukiLib:Notify({
+		    Name = "Notification",
+		    Description = "Theme Switched",
+		    Duration = 5,
+		})
+		TanukiLib:SetTheme("Light")
+    end
+})
+
+MainSection:Button({
+    Name = "Switch theme to Dark",
+    Callback = function()
+        TanukiLib:Notify({
+		    Name = "Notification",
+		    Description = "Theme Switched",
+		    Duration = 5,
+		})
+		TanukiLib:SetTheme("Dark")
+    end
+})
+
+MainSection:Paragraph({
+	Header = "MF what",
+	Body = "Click Lock toggle to lock it"
+})
+
+MainSection:Label({
+	Text = "Bold Label",
+	Bold = true,
+})
+
+local Toggle = MainSection:Toggle({
+    Name = "Enable Thing",
+    Default = false,
+    Callback = function(state)
+        print("toggled:", state)
+    end
+})
+
+MainSection:Button({
+    Name = "Lock Toggle",
+    Callback = function()
+        Toggle:Lock()
+    end
+})
+
+MainSection:Button({
+    Name = "Unlock Toggle",
+    Callback = function()
+        Toggle:Unlock()
+    end
+})
+
+MainSection:Slider({
+	Name = "Window Size",
+	Default = 50,
+	Minimum = 0,
+	Maximum = 100,
+	DisplayMethod = "Percent",
+	Precision = 0,
+	Callback = function(value)
+		print(value)
+	end
+})
+
+MainSection:Input({
+	Name = "Rename Label",
+	Placeholder = "New label text...",
+	AcceptedCharacters = "All",
+	Callback = function(text)
+		print(text)
+	end
+})
+
+MainSection:Keybind({
+	Name = "Keybind",
+	Blacklist = false,
+	Callback = function(binded)
+		TanukiLib:Notify({
+			Title = "Demo Window",
+			Description = "Pressed keybind - "..tostring(binded.Name),
+			Duration = 3
+		})
+	end,
+	onBinded = function(bind)
+		TanukiLib:Notify({
+			Title = "Demo Window",
+			Description = "Successfully Binded Keybind to - "..tostring(bind.Name),
+			Duration = 3
+		})
+	end,
+})
+
+SwordSection:Dropdown({
+	Name = "Theme",
+	Required = true,
+	Options = TanukiLib:GetThemes(),
+	Callback = function(value)
+		TanukiLib:SetTheme(value)
+	end,
+})
+
+local optionTable = {
+	"Apple",
+	"Banana",
+	"Orange",
+	"Grapes",
+	"Pineapple",
+	"Mango",
+	"Strawberry",
+	"Blueberry",
+	"Watermelon",
+	"Peach"
+}
+
+local MultiDropdown = SwordSection:Dropdown({
+	Name = "Multi Dropdown",
+	Search = true,
+	Multi = true,
+	Required = false,
+	Options = optionTable,
+	Default = {"Apple", "Orange"},
+	Callback = function(Value)
+		local Values = {}
+		for Value, State in next, Value do
+			table.insert(Values, Value)
+		end
+		print("Mutlidropdown changed:", table.concat(Values, ", "))
+	end,
+})
+
+SwordSection:Colorpicker({
+	Name = "Colorpicker",
+	Default = Color3.fromRGB(0, 255, 255),
+	Callback = function(color)
+		print("Color: ", color)
+	end,
+})
+
+SwordSection:Colorpicker({
+	Name = "Colorpicker with alpha",
+	Default = Color3.fromRGB(0, 255, 255),
+    Alpha = 0.67,
+	Callback = function(color)
+		print("Color: ", color)
+	end,
+})
+
+MainPage:Select()
 end
 
 getgenv().TanukiLib = TanukiLib
