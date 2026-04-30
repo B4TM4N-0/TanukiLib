@@ -22,6 +22,10 @@ TanukiLib.AddTheme = function(self, ThemeData)
 	self.Themes[ThemeData.Name] = ThemeData
 end
 
+TanukiLib.GetTheme = function(self)
+	return self.Themes[self.CurrentTheme]
+end
+
 TanukiLib.GetThemes = function(self)
 	local list = {}
 	for name in pairs(self.Themes) do
@@ -37,6 +41,18 @@ TanukiLib.SetTheme = function(self, name)
 			cb(name)
 		end
 	end
+end
+
+TanukiLib.BindTheme = function(self, instance, property, key)
+	local theme = self:GetTheme()
+	instance[property] = theme[key]
+
+	table.insert(self.themeCallbacks, function()
+		local updated = self:GetTheme()
+		if instance and instance.Parent then
+			instance[property] = updated[key]
+		end
+	end)
 end
 
 TanukiLib:AddTheme({
