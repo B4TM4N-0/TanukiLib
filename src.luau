@@ -5290,7 +5290,7 @@ SwordSection:Colorpicker({
 
 MainPage:Select()
 end
-Demo()
+--Demo()
 
 TanukiLib.setThemed = setThemed
 getgenv().TanukiLib = TanukiLib
