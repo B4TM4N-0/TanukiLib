@@ -3,7 +3,10 @@ local TanukiLib = {
 	Pages = { },
     Sections = { },
 	
-	Folders = "abcdefg",
+	Folders = {
+		Directory = "abcdefg",
+		abcdefg = "abcdefg/abcdefg"
+	},
 	
 	Themes = {},
 	CurrentTheme = "Light",
