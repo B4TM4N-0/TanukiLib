@@ -4,21 +4,12 @@ local TanukiLib = {
 	Pages = { },
     Sections = { },
 	
-	Folders = {
-		Directory = "abcdefg",
-		abcdefg = "abcdefg/abcdefg"
-	},
+	Folder = "69",
 	
 	Themes = {},
 	CurrentTheme = "Light",
 	themeCallbacks = {},
 }
-
-for Index, Value in TanukiLib.Folders do 
-    if not isfolder(Value) then
-        makefolder(Value)
-    end
-end
 
 GetService = function(service)
 	return cloneref and cloneref(game:GetService(service)) or game:GetService(service)
@@ -54,25 +45,13 @@ TanukiLib.SetTheme = function(self, name)
 end
 
 TanukiLib:AddTheme({
-	Name = "Tanuki",
-	Accent = Color3.fromRGB(101, 75, 50),
-	Background = Color3.fromRGB(42, 31, 20),
-	Surface = Color3.fromRGB(210, 175, 130),
-	Outline = Color3.fromRGB(160, 120, 80),
-	Text = Color3.fromRGB(235, 210, 175),
-	Placeholder = Color3.fromRGB(130, 100, 70),
-	Button = Color3.fromRGB(140, 100, 60),
-	Icon = Color3.fromRGB(190, 155, 110),
-})
-
-TanukiLib:AddTheme({
 	Name = "Dark",
 	Accent = Color3.fromRGB(24, 24, 27),
 	Background = Color3.fromRGB(10,10,10),
-	Surface = Color3.fromRGB(18,18,18),
+	Surface = Color3.fromRGB(14,14,14),
 	Outline = Color3.fromRGB(255, 255, 255),
 	Text = Color3.fromRGB(255, 255, 255),
-	Placeholder = Color3.fromRGB(122, 122, 122),
+	Placeholder = Color3.fromRGB(102,102,102),
 	Button = Color3.fromRGB(87, 86, 86),
 	Icon = Color3.fromRGB(180, 180, 180),
 })
@@ -80,8 +59,8 @@ TanukiLib:AddTheme({
 TanukiLib:AddTheme({
 	Name = "Light",
 	Accent = Color3.fromRGB(210, 210, 218),
-	Background = Color3.fromRGB(245, 245, 245),
-	Surface = Color3.fromRGB(255, 255, 255),
+	Background = Color3.fromRGB(241,241,241),
+	Surface = Color3.fromRGB(246,246,246),
 	Outline = Color3.fromRGB(170,170,170),
 	Text = Color3.fromRGB(20, 20, 20),
 	Placeholder = Color3.fromRGB(130, 130, 130),
@@ -102,7 +81,6 @@ local LocalPlayer = Players.LocalPlayer
 local Mouse = LocalPlayer:GetMouse()
 
 local windowState
-local sidebarExpanded
 local unloaded
 local ActivePage
 
@@ -203,7 +181,7 @@ local assets = {
 	interFont = "rbxassetid://12187365364",
 	grid = "rbxassetid://121484455191370",
 	move = "rbxassetid://116138709011735",
-	
+	userInfoDefault = "rbxassetid://124690549990123",
 	dashboard = "rbxassetid://75536606374585",
 	settings = "rbxassetid://135684703553372",
 	close = "rbxassetid://110786993356448",
@@ -351,7 +329,7 @@ TanukiLib.Notify = function(self, Data)
     
     local Items = {}
     
-	Items["Base"] = Create("ImageButton", {
+    Items["Main"] = Create("ImageButton", {
 		Parent = NotificationGUI,
 		ZIndex = 20,
 		Name = "frame",
@@ -360,7 +338,45 @@ TanukiLib.Notify = function(self, Data)
 		Position = UDim2.new(1, 10, 0.65, 0),
 		AutomaticSize = Enum.AutomaticSize.Y,
 		AutoButtonColor = false,
-	}) setThemed(Items["Base"], "BackgroundColor3", "Background")
+		ClipsDescendants = true
+	}) setThemed(Items["Main"], "BackgroundColor3", "Background")
+	
+	Items["BaseUIStroke"] = Create("UIStroke", {
+	    Name = "BaseUIStroke",
+	    ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
+	    Transparency = 0.9,
+	    Parent = Items["Main"] 
+	}) setThemed(Items["BaseUIStroke"], "Color", "Outline")
+	
+	Items["BaseUIStroke"] = Create("UICorner", {
+	    Name = "BaseUIStroke",
+	    CornerRadius = UDim.new(0, 15),
+	    Parent = Items["Main"]
+	})
+	
+	Items["Duration"] = Create("ImageLabel", {
+		Parent = Items["Main"],
+		ZIndex = 20,
+		Size = UDim2.new(1, 0, 1, 0),
+		BackgroundTransparency = 0.9,
+		Position = UDim2.new(0, 0, 0, 0),
+	}) setThemed(Items["Duration"] , "BackgroundColor3", "Outline")	
+	
+	Create("UICorner", {
+	    Name = "BaseUIStroke",
+	    CornerRadius = UDim.new(0, 1),
+	    Parent = Items["Duration"]
+	})
+	
+	Items["Base"] = Create("ImageLabel", {
+		Parent = Items["Main"],
+		ZIndex = 20,
+		Name = "Base",
+		Active = false,
+		BackgroundTransparency = 1,
+		Size = UDim2.new(1, 0, 0, 0),
+		AutomaticSize = Enum.AutomaticSize.Y,
+	}) 
 	
 	Create("UIListLayout", {
 	    Name = "BaseLayout",
@@ -378,32 +394,6 @@ TanukiLib.Notify = function(self, Data)
 	    PaddingRight = UDim.new(0, 30),
 	    PaddingBottom = UDim.new(0, 16),
 		Parent = Items["Base"] 
-	})
-	
-	Items["BaseUIStroke"] = Create("UIStroke", {
-	    Name = "BaseUIStroke",
-	    ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
-	    Transparency = 0.9,
-	    Parent = Items["Base"] 
-	}) setThemed(Items["BaseUIStroke"], "Color", "Outline")
-	
-	Items["BaseUIStroke"] = Create("UICorner", {
-	    Name = "BaseUIStroke",
-	    CornerRadius = UDim.new(0, 15),
-	    Parent = Items["Base"]
-	})
-	
-	Items["Shadow"]  = Create("ImageLabel", {
-	    ZIndex = 0,
-	    ImageTransparency = 0.5,
-	    Image = "rbxassetid://72548733587158",
-	    ImageColor3 = Color3.fromRGB(0, 0, 0),
-	    Size = UDim2.new(0, 146, 0, 0),
-	    Position = UDim2.new(0.5, 0, 0, 0),
-	    AutomaticSize = Enum.AutomaticSize.Y,
-	    AnchorPoint = Vector2.new(0.5, 0),
-	    BackgroundTransparency = 1,
-		Parent = NotificationGUI,
 	})
 	
 	
@@ -482,48 +472,31 @@ TanukiLib.Notify = function(self, Data)
 		BackgroundTransparency = 1,
 	}) setThemed(Items["Icon"], "ImageColor3", "Icon")
 
-	Items["PinnedFrame"] = Create("Frame", {
-		BorderSizePixel = 0,
-		ZIndex = 20,
-		Visible = false,
-		LayoutOrder = 3,
-		Size = UDim2.new(0, 0, 1, 0),
-		BackgroundTransparency = 1,
-		Parent = Items["Base"],
-	})
-
-	Items["PinnedIcon"] = Create("ImageLabel", {
-		Parent = Items["PinnedFrame"],
-		ZIndex = 20,
-		ImageTransparency = 0.8,
-		Image = "rbxassetid://116297337005602",
-		Name = "icon",
-		Size = UDim2.new(0, 14, 0, 14),
-		Position = UDim2.new(0.5, 6, 0.5, 0),
-		AnchorPoint = Vector2.new(0.5, 0.5),
-		BackgroundTransparency = 1,
-	}) setThemed(Items["PinnedIcon"], "ImageColor3", "Icon")
-
 	Create("UIScale", {
-		Parent = NotificationGUI,
+		Parent = Items["Base"],
 		Name = "scale",
 	})
 	
 	Notify.Items = Items
-	local Base = Items["Base"]
-	local totalOffset = 0
+	local Base = Items["Main"]
+	local Duration = Items["Duration"]
 	
+	local totalOffset = 0
 	local dismissed = false
-
+	
+	table.insert(ActiveNotify, Base)
+	
 	local function dismiss()
 	    if dismissed then return end
 	    dismissed = true
-	
-	    local i = table.find(ActiveNotify, Base)
-	    if i then 
-	        table.remove(ActiveNotify, i) 
-	    end
+		table.remove(ActiveNotify, 
+			table.find(ActiveNotify, Base)
+		) 
 	    
+		if dismissed then
+			Duration:TweenSize(UDim2.new(0, 0, 1, 0),"Out", "Sine", 0.15, true)
+		end	
+		
 	    if Base and Base.Parent then
 	        Base:TweenPosition(UDim2.new(1, 10, Base.Position.Y.Scale, Base.Position.Y.Offset), "In", "Sine", 0.3, true)
 	        task.delay(0.3, function() 
@@ -532,8 +505,7 @@ TanukiLib.Notify = function(self, Data)
 	    end
 	end
 	
-	Items["Base"].MouseButton1Click:Connect(dismiss)
-	table.insert(ActiveNotify, Base)
+	Base.MouseButton1Click:Connect(dismiss)
 	
 	task.wait()
 	
@@ -551,7 +523,9 @@ TanukiLib.Notify = function(self, Data)
 	    oldest:TweenPosition(UDim2.new(1, 10, oldest.Position.Y.Scale, oldest.Position.Y.Offset), "In", "Sine", 0.3, true)
 	    task.delay(0.3, function() if oldest.Parent then oldest:Destroy() end end)
 	end
+	
 	Base:TweenPosition(UDim2.new(1, -Base.AbsoluteSize.X - 10, 0.65, 0), "Out", "Back", 0.5, true)
+	Duration:TweenSize(UDim2.new(0, 0, 1, 0), "Out", "Linear", Notify.Duration, true)
 
 	task.delay(Notify.Duration, function()
 	    if not dismissed then
@@ -570,8 +544,9 @@ TanukiLib.Window = function(self, Data)
         SubName = Data.SubName or "Fine-tuning for sure wins",
         Icon = Data.Icon,
         Theme = Data.Theme,
-        SidebarState = Data.SidebarState or "Expand",
         Search = Data.Search or false,
+        ShowUserInfo = Data.ShowUserInfo or false,
+        AcrylicBlur = Data.AcrylicBlur or true,
         PagesGroup = { },
         Pages = { },
         Items = { },
@@ -670,10 +645,9 @@ TanukiLib.Window = function(self, Data)
 	    Parent = Items["FloatingButton"],
 	}) setThemed(Items["FloatingButtonUIStroke"], "Color", "Outline")
 	
-	
-	Items["Base"] = Create("Frame", {
-	    Name = "Base",
-	    Size = UDim2.new(0, 500, 0, 320),
+	Items["Main"] = Create("Frame", {
+	    Name = "Main",
+	    Size = UDim2.new(0, 480, 0, 340),
 	    Position = UDim2.new(0, 0, 0, 0),
 	    BackgroundColor3 = Color3.fromRGB(10,10,10),
 		AnchorPoint = Vector2.new(0.5, 0.5),
@@ -681,26 +655,36 @@ TanukiLib.Window = function(self, Data)
 	    BorderColor3 = Color3.fromRGB(0, 0, 0),
 	    BorderSizePixel = 0,
 	    Active = true,
-	    BackgroundTransparency = 0,
+	    BackgroundTransparency = Window.AcrylicBlur and 0.08 or 0,
 	    Parent = GuiHolder
-	}) setThemed(Items["Base"], "BackgroundColor3", "Background")
+	}) setThemed(Items["Main"], "BackgroundColor3", "Background")
+	
+	Items["Base"] = Create("Frame", {
+	    Name = "Base",
+	    ZIndex = 69,
+	    Size = UDim2.new(1, 0, 1, 0),
+	    Position = UDim2.new(0, 0, 0, 0),
+	    BackgroundColor3 = Color3.fromRGB(10,10,10),
+	    BackgroundTransparency = 1,
+	    Parent = Items["Main"],
+	}) 
 	
 	Items["BaseCorner"] = Create("UICorner", {
 	    Name = "Corner",
 	    CornerRadius = UDim.new(0, 15),
-	    Parent = Items["Base"]
+	    Parent = Items["Main"]
 	})
 	
 	Items["BaseUIScale"] = Create("UIScale", {
 	    Name = "BaseUIScale",
-	    Parent = Items["Base"]
+	    Parent = Items["Main"]
 	})
 	
 	Items["BaseUIStroke"] = Create("UIStroke", {
 	    Name = "BaseUIStroke",
 	    ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
 	    Transparency = 0.9,
-	    Parent = Items["Base"]
+	    Parent = Items["Main"]
 	}) setThemed(Items["BaseUIStroke"], "Color", "Outline")
 	
 	Items["Topbar"] = Create("Frame", {
@@ -841,18 +825,6 @@ TanukiLib.Window = function(self, Data)
 	    Parent = Items["WindowControls"]
 	})
 	
-	Items["SidebarButton"] = Create("ImageButton", {
-	    Name = "SidebarButton",
-	    Size = UDim2.fromOffset(25, 25),
-	    Position = UDim2.new(0, 0, 0, 0),
-	    ImageColor3 = Color3.fromRGB(255, 255, 255),
-	    Image = assets.dashboard,
-	    ImageTransparency = 0,
-	    ScaleType = Enum.ScaleType.Fit,
-	    BackgroundTransparency = 1,
-	    Parent = Items["WindowControls"]
-	}) setThemed(Items["SidebarButton"], "ImageColor3", "Icon")
-	
 	Items["SettingsButton"] = Create("ImageButton", {
 	    Name = "SettingsButton",
 	    Size = UDim2.fromOffset(25, 25),
@@ -893,16 +865,16 @@ TanukiLib.Window = function(self, Data)
 	
 	Items["SidebarPadding"] = Create("UIPadding", {
 	    Name = "Padding",
-	    PaddingTop = UDim.new(0, 5),
-	    PaddingBottom = UDim.new(0, 5),
-	    PaddingLeft = UDim.new(0, 5),
-	    PaddingRight = UDim.new(0, 5),
+	    PaddingTop = UDim.new(0, 8),
+	    PaddingBottom = UDim.new(0, 8),
+	    PaddingLeft = UDim.new(0, 8),
+	    PaddingRight = UDim.new(0, 8),
 	    Parent = Items["Sidebar"]
 	})
 	
 	Items["ScrollTab"] = Create("ScrollingFrame", {
 	    Name = "ScrollTab",
-	    Size = UDim2.new(1, 0, 1, 0),
+	    Size = UDim2.new(1, 0, 1, -50),
 		AutomaticCanvasSize = Enum.AutomaticSize.Y,
 		BottomImage = "",
 		CanvasSize = UDim2.new(),
@@ -932,6 +904,120 @@ TanukiLib.Window = function(self, Data)
 	    PaddingRight = UDim.new(0, 5),
 	    Parent = Items["ScrollTab"]
 	})
+	
+	
+	Items["UserInfo"] = Create("ImageButton", {
+	    Name = "Frame",
+	    Size = UDim2.new(1, 0, 0, 50),
+	    Position = UDim2.new(0, 0, 1, -50),
+	    Active = true,
+	    BackgroundTransparency = 0.6,
+	    Parent = Items["Sidebar"]
+	}) setThemed(Items["UserInfo"], "BackgroundColor3", "Surface")
+	
+	Items["UserInfoCorner"] = Create("UICorner", {
+	    Name = "Corner",
+	    Parent = Items["UserInfo"]
+	})
+	
+	Items["UserInfoStroke"] = Create("UIStroke", {
+	    Name = "UserInfoStroke",
+	    ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
+	    Transparency = 0.9,
+	    Parent = Items["UserInfo"]
+	}) setThemed(Items["UserInfoStroke"], "Color", "Outline")
+	
+	
+	Items["UserInfoLayout"] = Create("UIListLayout", {
+	    Name = "UserInfoLayout",
+	    SortOrder = Enum.SortOrder.LayoutOrder,
+		Padding = UDim.new(0, 6),
+		FillDirection = Enum.FillDirection.Horizontal,
+	    VerticalAlignment = Enum.VerticalAlignment.Center,
+	    Parent = Items["UserInfo"]
+	})
+	
+	Items["UserInfoPadding"] = Create("UIPadding", {
+	    Name = "Padding",
+	    PaddingBottom = UDim.new(0, 10),
+	    PaddingLeft = UDim.new(0, 10),
+		PaddingTop = UDim.new(0, 10),
+	    PaddingRight = UDim.new(0, 10),
+	    Parent = Items["UserInfo"]
+	})	
+	
+	--/ from Roblox devforum
+	local userId = LocalPlayer.UserId
+	local thumbType = Enum.ThumbnailType.AvatarBust
+	local thumbSize = Enum.ThumbnailSize.Size48x48
+	local headshotImage, isReady = Players:GetUserThumbnailAsync(userId, thumbType, thumbSize)
+	
+	Items["Headshot"] = Create("ImageLabel", {
+		Name = "Headshot",
+		BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+		BackgroundTransparency = 1,
+		BorderColor3 = Color3.fromRGB(0, 0, 0),
+		BorderSizePixel = 0,
+		Size = UDim2.fromOffset(32, 32),
+		Image = (isReady and headshotImage) or "rbxassetid://0",
+		Parent = Items["UserInfo"],
+	})
+	
+	Items["HeadshotCorner"] = Create("UICorner", {
+	    Name = "Corner",
+	    CornerRadius = UDim.new(1, 0),
+	    Parent = Items["Headshot"]
+	})
+	
+	Items["TextInfoFrame"] = Create("Frame", {
+	    Name = "Frame",
+	    Size = UDim2.new(1, 0, 0, 50),
+	    Position = UDim2.new(0, 0, 1, -50),
+	    --Active = false,
+	    BackgroundTransparency = 1,
+	    Parent = Items["UserInfo"]
+	})
+	
+	Items["TextInfoLayout"] = Create("UIListLayout", {
+	    Name = "Layout",
+	    SortOrder = Enum.SortOrder.LayoutOrder,
+	    Padding = UDim.new(0, 1),
+	    HorizontalAlignment = Enum.HorizontalAlignment.Left,
+	    VerticalAlignment = Enum.VerticalAlignment.Center,
+	    Parent = Items["TextInfoFrame"]
+	})
+	
+	
+	Items["DisplayName"] = Create("TextLabel", {
+	    Name = "Display",
+	    Size = UDim2.fromScale(1,0),
+		AutomaticSize = Enum.AutomaticSize.XY,
+	    FontFace = Font.new(assets.interFont, Enum.FontWeight.SemiBold, Enum.FontStyle.Normal),
+	    RichText = true,
+	    Text = LocalPlayer.DisplayName,
+	    BackgroundTransparency = 1,
+		TextTransparency = 0.1,
+		TextTruncate = Enum.TextTruncate.SplitWord,
+		TextXAlignment = Enum.TextXAlignment.Left,
+	    TextSize = 14,
+	    Parent = Items["TextInfoFrame"]
+	}) setThemed(Items["DisplayName"], "TextColor3", "Text")
+	
+	Items["Username"] = Create("TextLabel", {
+	    Name = "User",
+	    Size = UDim2.fromScale(1,0),
+		AutomaticSize = Enum.AutomaticSize.XY,
+	    FontFace = Font.new(assets.interFont, Enum.FontWeight.Medium, Enum.FontStyle.Normal),
+	    RichText = true,
+	    Text = "@" .. LocalPlayer.Name,
+	    BackgroundTransparency = 1,
+		TextTransparency = 0.6,
+		TextTruncate = Enum.TextTruncate.SplitWord,
+		TextXAlignment = Enum.TextXAlignment.Left,
+	    TextSize = 13,
+	    Parent = Items["TextInfoFrame"]
+	}) setThemed(Items["Username"] , "TextColor3", "Text")
+	
 	
 	Items["Body"] = Create("Frame", {
 	    Name = "Body",
@@ -1002,7 +1088,26 @@ TanukiLib.Window = function(self, Data)
         Parent = Items["SearchBox"],
     })
     
-	
+    
+    Items["SizeableFrame"] = Create("Frame", {
+        Name = "SizeableFrame",
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        Position = UDim2.fromScale(1, 1),
+        Size = UDim2.fromOffset(32, 32),
+        Parent = Items["Main"],
+    }) 
+    Items["SizeableIcon"] = Create("ImageLabel", {
+        Name = "SizeableFrame",
+        Image = "rbxassetid://120997033468887",
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        BackgroundTransparency = 1,
+        ImageTransparency = 0.6,
+        Position = UDim2.new(0.5, -16, 0.5, -16),
+        Size = UDim2.fromOffset(86, 86),
+        Parent = Items["SizeableFrame"],
+    }) 
 	
 	Window.Items = Items
 	
@@ -1053,7 +1158,7 @@ TanukiLib.Window = function(self, Data)
 	end
 	
 	Items["Topbar"].InputBegan:Connect(function(input)
-	    onDragStart(input, Items["Base"])
+	    onDragStart(input, Items["Main"])
 	end)
 	Items["Topbar"].InputChanged:Connect(onDragUpdate)
 	
@@ -1104,11 +1209,42 @@ TanukiLib.Window = function(self, Data)
 		onUnloadCallback = callback
 	end
 	
+	local function SetUserInfoState(State)
+		local UserInfo = Items["UserInfo"]
+		local TabsHolder = Items["ScrollTab"]
+		
+		if State == true then
+			UserInfo.Visible = true
+			TabsHolder.Size = UDim2.new(1, 0, 1, -60)
+			UserInfo.Headshot.Image = (isReady and headshotImage) or "rbxassetid://0"
+			UserInfo.Frame.User.Text = "@" .. LocalPlayer.Name
+			UserInfo.Frame.Display.Text = LocalPlayer.DisplayName
+		elseif State == false then
+			UserInfo.Visible = false
+			TabsHolder.Size = UDim2.new(1, 0, 1, 0)
+		elseif State == "anon" then
+			UserInfo.Visible = true
+			TabsHolder.Size = UDim2.new(1, 0, 1, -60)
+			UserInfo.Headshot.Image = assets.userInfoDefault
+			UserInfo.Frame.User.Text = "@anon"
+			UserInfo.Frame.Display.Text = "Anon"
+		end
+	end
+
+	SetUserInfoState(Window.ShowUserInfo)
+
+	function Window:SetUserInfoState(State)
+		SetUserInfoState(State)
+	end
+	function Window:GetUserInfoState(State)
+		return Window.ShowUserInfo
+	end
+	
 	function Window:SetSize(Size)
-		Items["Base"].Size = Size
+		Items["Main"].Size = Size
 	end
 	function Window:GetSize(Size)
-		return Items["Base"].Size
+		return Items["Main"].Size
 	end
 	
 	function Window:SetScale(Scale)
@@ -1120,7 +1256,7 @@ TanukiLib.Window = function(self, Data)
 	
 	function Window:SetState(State)
 		windowState = State
-		Items["Base"].Visible = State
+		Items["Main"].Visible = State
 		Items["FloatingButton"].Visible =  not State -- opposite of the Base
 	end
 	function Window:GetState()
@@ -1169,57 +1305,232 @@ TanukiLib.Window = function(self, Data)
 	Items["CloseButton"].MouseButton1Click:Connect(ToggleMenu)
 	Items["FloatingButtonTitle"].MouseButton1Click:Connect(ToggleMenu)
 	
-	local TweenSettings = {
-		SidebarExpand = UDim2.new(0.32, 0, 1, -50),
-		SidebarCollapse = UDim2.new(0.12, 0, 1, -50),
-		ElementsExpand = { Size = UDim2.new(1 - 0.32, 0, 1, -50), Position = UDim2.new(0.32, 0, 0, 50) },
-		ElementsCollapse = { Size = UDim2.new(1 - 0.12, 0, 1, -50), Position = UDim2.new(0.12, 0, 0, 50) },
+	local ClassParser = {
+		["Toggle"] = {
+			Save = function(Flag, data)
+				return {
+					type = "Toggle", 
+					flag = Flag, 
+					state = data.State or false
+				}
+			end,
+			Load = function(Flag, data)
+				if TanukiLib.Options[Flag] and data.state then
+					TanukiLib.Options[Flag]:UpdateState(data.state)
+				end
+			end
+		},
+		["Slider"] = {
+			Save = function(Flag, data)
+				return {
+					type = "Slider", 
+					flag = Flag, 
+					value = (data.Value and tostring(data.Value)) or false
+				}
+			end,
+			Load = function(Flag, data)
+				if TanukiLib.Options[Flag] and data.value then
+					TanukiLib.Options[Flag]:UpdateValue(data.value)
+				end
+			end
+		},
+		["Input"] = {
+			Save = function(Flag, data)
+				return {
+					type = "Input", 
+					flag = Flag, 
+					text = data.Text
+				}
+			end,
+			Load = function(Flag, data)
+				if TanukiLib.Options[Flag] and data.text and type(data.text) == "string" then
+					TanukiLib.Options[Flag]:UpdateText(data.text)
+				end
+			end
+		},
+		["Keybind"] = {
+			Save = function(Flag, data)
+				return {
+					type = "Keybind", 
+					flag = Flag, 
+					bind = (typeof(data.Bind) == "EnumItem" and data.Bind.Name) or nil
+				}
+			end,
+			Load = function(Flag, data)
+				if TanukiLib.Options[Flag] and data.bind then
+					TanukiLib.Options[Flag]:Bind(Enum.KeyCode[data.bind])
+				end
+			end
+		},
+		["Dropdown"] = {
+			Save = function(Flag, data)
+				return {
+					type = "Dropdown", 
+					flag = Flag, 
+					value = data.Value
+				}
+			end,
+			Load = function(Flag, data)
+				if TanukiLib.Options[Flag] and data.value then
+					TanukiLib.Options[Flag]:UpdateSelection(data.value)
+				end
+			end
+		},
+		["Colorpicker"] = {
+			Save = function(Flag, data)
+				local function Color3ToHex(color)
+					return string.format("#%02X%02X%02X", math.floor(color.R * 255), math.floor(color.G * 255), math.floor(color.B * 255))
+				end
 
-		EasingStyle = Enum.EasingStyle.Sine
+				return {
+					type = "Colorpicker", 
+					flag = Flag, 
+					color = Color3ToHex(data.Color) or nil,
+					alpha = data.Alpha
+				}
+			end,
+			Load = function(Flag, data)
+				local function HexToColor3(hex)
+					local r = tonumber(hex:sub(2, 3), 16) / 255
+					local g = tonumber(hex:sub(4, 5), 16) / 255
+					local b = tonumber(hex:sub(6, 7), 16) / 255
+					return Color3.new(r, g, b)
+				end
+
+				if TanukiLib.Options[Flag] and data.color then
+					TanukiLib.Options[Flag]:SetColor(HexToColor3(data.color)) 
+					if data.alpha then
+						TanukiLib.Options[Flag]:SetAlpha(data.alpha)
+					end
+				end
+			end
+		}
 	}
 
-	local function ChangeState(State)
-	    if State == "Expand" then
-	        Tween(Items["Sidebar"], TweenInfo.new(0.2, TweenSettings.EasingStyle), {
-	            Size = TweenSettings.SidebarExpand
-	        }):Play()
-			Tween(Items["Body"], TweenInfo.new(0.2, TweenSettings.EasingStyle), {
-                Size = TweenSettings.ElementsExpand.Size,
-                Position = TweenSettings.ElementsExpand.Position
-            }):Play()
-	        for _, p in ipairs(Window.Pages) do
-	            
-	            local pad = p.Items["InactiveUIPadding"]
-	            pad.PaddingLeft = UDim.new(0, 24)
-	            pad.PaddingRight = UDim.new(0, 35)
-	            pad.PaddingTop = UDim.new(0, 1)
-	            pad.PaddingBottom = UDim.new(0, 0)
-	            p.Items["InactiveTitle"].Visible = true
-	        end
-	    elseif State == "Collapse" then
-	        Tween(Items["Sidebar"], TweenInfo.new(0.2, TweenSettings.EasingStyle), {
-	            Size = TweenSettings.SidebarCollapse
-	        }):Play()
-		Tween(Items["Body"], TweenInfo.new(0.2, TweenSettings.EasingStyle), {
-                Size = TweenSettings.ElementsCollapse.Size,
-                Position = TweenSettings.ElementsCollapse.Position
-            }):Play()
-	        for _, p in ipairs(Window.Pages) do
-	            
-	            local pad = p.Items["InactiveUIPadding"]
-	            pad.PaddingLeft = UDim.new(0, 0)
-	            pad.PaddingRight = UDim.new(0, 0)
-	            pad.PaddingTop = UDim.new(0, 1)
-	            pad.PaddingBottom = UDim.new(0, 0)
-	            p.Items["InactiveTitle"].Visible = false
-	        end
-	    end
+	local function BuildFolderTree()
+		if isStudio or not (isfolder and makefolder) then return "Config system unavailable." end
+
+		local paths = {
+			TanukiLib.Folder,
+			TanukiLib.Folder .. "/settings"
+		}
+
+		for i = 1, #paths do
+			local str = paths[i]
+			if not isfolder(str) then
+				makefolder(str)
+			end
+		end
+	end
+
+	function TanukiLib:LoadAutoLoadConfig()
+		if isStudio or not (isfile and readfile) then return "Config system unavailable." end
+
+		if isfile(TanukiLib.Folder .. "/settings/autoload.txt") then
+			local name = readfile(TanukiLib.Folder .. "/settings/autoload.txt")
+
+			local suc, err = TanukiLib:LoadConfig(name)
+			if not suc then
+				TanukiLib:Notify({
+					Title = "Interface",
+					Description = "Error loading autoload config: " .. err
+				})
+			end
+
+			TanukiLib:Notify({
+				Title = "Interface",
+				Description = string.format("Autoloaded config: %q", name),
+			})
+		end
+	end
+
+	function TanukiLib:SetFolder(Folder)
+		TanukiLib.Folder = Folder;
+		BuildFolderTree()
+	end
+
+	function TanukiLib:SaveConfig(Path)
+		if isStudio or not writefile then return "Config system unavailable." end
+
+		if (not Path) then
+			return false, "Please select a config file."
+		end
+
+		local fullPath = TanukiLib.Folder .. "/settings/" .. Path .. ".json"
+
+		local data = {
+			objects = {}
+		}
+
+		for flag, option in next, TanukiLib.Options do
+			if not ClassParser[option.Class] then continue end
+			if option.IgnoreConfig then continue end
+
+			table.insert(data.objects, ClassParser[option.Class].Save(flag, option))
+		end	
+
+		local success, encoded = pcall(HttpService.JSONEncode, HttpService, data)
+		if not success then
+			return false, "Unable to encode into JSON data"
+		end
+
+		writefile(fullPath, encoded)
+		return true
+	end
+
+	function TanukiLib:LoadConfig(Path)
+		if isStudio or not (isfile and readfile) then return "Config system unavailable." end
+
+		if (not Path) then
+			return false, "Please select a config file."
+		end
+
+		local file = TanukiLib.Folder .. "/settings/" .. Path .. ".json"
+		if not isfile(file) then return false, "Invalid file" end
+
+		local success, decoded = pcall(HttpService.JSONDecode, HttpService, readfile(file))
+		if not success then return false, "Unable to decode JSON data." end
+
+		for _, option in next, decoded.objects do
+			if ClassParser[option.type] then
+				task.spawn(function() 
+					ClassParser[option.type].Load(option.flag, option) 
+				end)
+			end
+		end
+
+		return true
+	end
+
+	function TanukiLib:RefreshConfigList()
+		
+		local list = (isfolder(TanukiLib.Folder) and isfolder(TanukiLib.Folder .. "/settings")) and listfiles(TanukiLib.Folder .. "/settings") or {}
+
+		local out = {}
+		for i = 1, #list do
+			local file = list[i]
+			if file:sub(-5) == ".json" then
+				local pos = file:find(".json", 1, true)
+				local start = pos
+
+				local char = file:sub(pos, pos)
+				while char ~= "/" and char ~= "\\" and char ~= "" do
+					pos = pos - 1
+					char = file:sub(pos, pos)
+				end
+
+				if char == "/" or char == "\\" then
+					local name = file:sub(pos + 1, start - 1)
+					if name ~= "options" then
+						table.insert(out, name)
+					end
+				end
+			end
+		end
+
+		return out
 	end
 	
-	Items["SidebarButton"].MouseButton1Click:Connect(function()
-	    sidebarExpanded = not sidebarExpanded
-	    ChangeState(sidebarExpanded and "Expand" or "Collapse")
-	end)
 	
 	table.insert(TanukiLib.themeCallbacks, function(name)
 	    local newTheme = TanukiLib.Themes[name] or {}
@@ -1241,9 +1552,7 @@ TanukiLib.Window = function(self, Data)
 		ContentProvider:PreloadAsync(assetList)
 	end)
 	
-	sidebarExpanded = true
 	windowState = true
-	ChangeState(Window.SidebarState)
 	
 	return setmetatable(Window, TanukiLib)
 end
@@ -1256,7 +1565,8 @@ TanukiLib.PageGroup = function(self, Data)
 	    Window = self,
 	    Parent = self,
 	    Items = { },
-	    
+	
+	    Name = Data.Name or nil
 	}
 	
 	local Items = {}
@@ -1278,7 +1588,7 @@ TanukiLib.PageGroup = function(self, Data)
 	})
 	
 	Create("UIListLayout", {
-	    Padding = UDim.new(0, 15),
+	    Padding = UDim.new(0, (PageGroup.Name ~= nil and PageGroup.Name ~= "") and 5 or 15),
 	    HorizontalAlignment = Enum.HorizontalAlignment.Center,
 	    SortOrder = Enum.SortOrder.LayoutOrder,
 	    Parent = Items["PageTabSwitchers"],
@@ -1288,6 +1598,31 @@ TanukiLib.PageGroup = function(self, Data)
 	    PaddingBottom = UDim.new(0, 6),
 	    Parent = Items["PageTabSwitchers"],
 	})
+	
+	Items["Header"] = Create("Frame", {
+	    Name = "Header",
+	    BackgroundTransparency = 1,
+	    Size = UDim2.new(1, 0, 0, 28),
+	    ClipsDescendants = true,
+		Visible = PageGroup.Name ~= nil and PageGroup.Name ~= "",
+	    Parent = Items["PageTabSwitchers"],
+	}) 
+	
+	Items["TitleText"] = Create("TextLabel", {
+	    Name = "Title",
+	    FontFace = Font.new(assets.interFont, Enum.FontWeight.Regular, Enum.FontStyle.Normal),
+	    RichText = true,
+	    Text = PageGroup.Name,
+	    TextSize = 14,
+		TextWrapped = true,
+	    TextTransparency = 0.3,
+	    TextXAlignment = Enum.TextXAlignment.Left,
+	    BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+	    BackgroundTransparency = 1,
+	    Size = UDim2.fromScale(1, 1),
+	    Parent = Items["Header"]
+	}) setThemed(Items["TitleText"], "TextColor3", "Text")
+	
 	PageGroup.Items = Items
 	
 	return setmetatable(PageGroup, TanukiLib.PagesGroup)
@@ -1314,7 +1649,7 @@ TanukiLib.Page = function(self, Data)
 	
 	Items["Inactive"] = Create("ImageButton", {
 	    Name = "Inactive",
-	    Size = UDim2.new(1, 0, 0, 38),
+	    Size = UDim2.new(1, 0, 0, 36),
 	    Position = UDim2.new(0, 10, 0, 10),
 	    BackgroundColor3 = Color3.fromRGB(16,16,16),
 	    ImageTransparency = 1,
@@ -1369,7 +1704,7 @@ TanukiLib.Page = function(self, Data)
 	    BackgroundColor3 = Color3.fromRGB(255, 255, 255),
 	    Text = Page.Name,
 	    BackgroundTransparency = 1,
-	    TextSize = 16,
+	    TextSize = 15,
 	    Parent = Items["Inactive"]
 	}) setThemed(Items["InactiveTitle"], "TextColor3", "Text")
 	
@@ -1424,16 +1759,16 @@ TanukiLib.Page = function(self, Data)
 	
 	Items["ElementsScrollPadding"] = Create("UIPadding", {
 	    Name = "Padding",
-	    PaddingTop = UDim.new(0, 5),
-	    PaddingBottom = UDim.new(0, 5),
-	    PaddingLeft = UDim.new(0, 5),
-	    PaddingRight = UDim.new(0, 5),
+	    PaddingTop = UDim.new(0, 12),
+	    PaddingBottom = UDim.new(0, 16),
+	    PaddingLeft = UDim.new(0, 15),
+	    PaddingRight = UDim.new(0, 15),
 	    Parent = Items["ElementsScroll"]
 	})
 	
 	Items["ElementsScrollingList"] = Create("UIListLayout", {
 	    Name = "ElementsScrollingList",
-	    Padding = UDim.new(0, 10),
+	    Padding = UDim.new(0, 11),
 	    SortOrder = Enum.SortOrder.LayoutOrder,
 	    HorizontalAlignment = Enum.HorizontalAlignment.Center,
 	    Parent = Items["ElementsScroll"]
@@ -1488,7 +1823,110 @@ TanukiLib.Page = function(self, Data)
 	function Page:Destroy()
 		Items["Inactive"]:Destroy()
 	end
-			
+	
+	
+	function Page:InsertConfigSection(Side)
+		local configSection = Page:Section({})
+
+		local inputPath = nil
+		local selectedConfig = nil
+
+		configSection:Input({
+			Name = "Config Name",
+			Placeholder = "Name",
+			AcceptedCharacters = "All",
+			Callback = function(input)
+				inputPath = input
+			end,
+		})
+
+		local configSelection = configSection:Dropdown({
+			Name = "Select Config",
+			Multi = false,
+			Required = false,
+			Options = TanukiLib:RefreshConfigList(),
+			Callback = function(Value)
+				selectedConfig = Value
+			end,
+		})
+
+		configSection:Button({
+			Name = "Create Config",
+			Callback = function()
+				if not inputPath or string.gsub(inputPath, " ", "") == "" then
+					TanukiLib:Notify({
+						Title = "Interface",
+						Description = "Config name cannot be empty."
+					})
+					return
+				end
+
+				local success, returned = TanukiLib:SaveConfig(inputPath)
+				if not success then
+					TanukiLib:Notify({
+						Title = "Interface",
+						Description = "Unable to save config, return error: " .. returned
+					})
+				end
+
+				TanukiLib:Notify({
+					Title = "Interface",
+					Description = string.format("Created config %q", inputPath),
+				})
+
+				configSelection:ClearOptions()
+				configSelection:InsertOptions(TanukiLib:RefreshConfigList())
+			end,
+		})
+
+		configSection:Button({
+			Name = "Load Config",
+			Callback = function()
+				local success, returned = TanukiLib:LoadConfig(configSelection.Value)
+				if not success then
+					TanukiLib:Notify({
+						Title = "Interface",
+						Description = "Unable to load config, return error: " .. returned
+					})
+					return
+				end
+
+				TanukiLib:Notify({
+					Title = "Interface",
+					Description = string.format("Loaded config %q", configSelection.Value),
+				})
+			end,
+		})
+
+		configSection:Button({
+			Name = "Overwrite Config",
+			Callback = function()
+				local success, returned = TanukiLib:SaveConfig(configSelection.Value)
+				if not success then
+					TanukiLib:Notify({
+						Title = "Interface",
+						Description = "Unable to overwrite config, return error: " .. returned
+					})
+					return
+				end
+
+				TanukiLib:Notify({
+					Title = "Interface",
+					Description = string.format("Overwrote config %q", configSelection.Value),
+				})
+			end,
+		})
+
+		configSection:Button({
+			Name = "Refresh Config List",
+			Callback = function()
+				configSelection:ClearOptions()
+				configSelection:InsertOptions(TanukiLib:RefreshConfigList())
+			end,
+		})
+
+	end
+
 	Page.Window.Pages[#Page.Window.Pages + 1] = Page
 	return setmetatable(Page, TanukiLib.Pages)
 end
@@ -1547,14 +1985,14 @@ TanukiLib.Section = function(self, Data)
 	Items["Section"] = Create("Frame", {
 	    Name = "Section",
 	    AutomaticSize = Enum.AutomaticSize.Y,
-	    BackgroundTransparency = 1,
-	    BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+	    BackgroundTransparency = 0.89,
 	    BorderSizePixel = 0,
 	    Position = UDim2.fromScale(0, 6.78e-08),
 	    Size = UDim2.fromScale(1, 0),
 	    ClipsDescendants = true,
 	    Parent = Section.Page.Items["ElementsScroll"],
-	})
+	}) setThemed(Items["Section"], "BackgroundColor3", "Surface")
+	
 	
 	Items["SectionUICorner"] = Create("UICorner", {
 	    Name = "SectionUICorner",
@@ -1563,7 +2001,7 @@ TanukiLib.Section = function(self, Data)
 	
 	Items["SectionUIListLayout"] = Create("UIListLayout", {
 	    Name = "SectionUIListLayout",
-	    Padding = UDim.new(0, 10),
+	    Padding = UDim.new(0, 5),
 	    SortOrder = Enum.SortOrder.LayoutOrder,
 	    Parent = Items["Section"]
 	})
@@ -1576,6 +2014,14 @@ TanukiLib.Section = function(self, Data)
 	    PaddingTop = UDim.new(0, 12),
 	    Parent = Items["Section"]
 	})
+	
+	Items["SectionUIStroke"] = Create("UIStroke", {
+	    Name = "SectionUIStroke",
+	    ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
+	    Transparency = 0.95,
+	    Parent = Items["Section"]
+	}) setThemed(Items["SectionUIStroke"], "Color", "Outline")
+	
 	
 	Section.Items = Items
     
@@ -1609,7 +2055,8 @@ TanukiLib.Sections.Header = function(self, Data)
 	
 	Items["HeaderUIPadding"] = Create("UIPadding", {
 	    Name = "UIPadding",
-	    PaddingBottom = UDim.new(0, 5),
+	    PaddingLeft = UDim.new(0, 3),
+	    PaddingBottom = UDim.new(0, 6),
 	    Parent = Items["Header"]
 	})
 	
@@ -1618,7 +2065,7 @@ TanukiLib.Sections.Header = function(self, Data)
 	    FontFace = Font.new(assets.interFont, Enum.FontWeight.Medium, Enum.FontStyle.Normal),
 	    RichText = true,
 	    Text = Header.Name,
-	    TextSize = 16,
+	    TextSize = 18,
 	    TextTransparency = 0.3,
 	    TextWrapped = true,
 	    TextXAlignment = Enum.TextXAlignment.Left,
@@ -1853,7 +2300,7 @@ TanukiLib.Sections.Toggle = function(self, Data)
         Default = Data.Default or false,
         Flag = Data.Flag or nil,
         Callback = Data.Callback or Data.callback or function() end,
-
+        Class = "Toggle"
     }
     local Items = {}
     local locked = false
@@ -2112,6 +2559,7 @@ TanukiLib.Sections.Slider = function(self, Data)
         onInputComplete = Data.onInputComplete or nil,
 
         Value = nil,
+        Class = "Slider"
     }
 
     local Items = {}
@@ -2455,6 +2903,7 @@ TanukiLib.Sections.Input = function(self, Data)
         Flag = Data.Flag or nil,
         
         Text = Data.Default or "",
+        Class = "Input"
     }
 
     local Items = {}
@@ -2744,6 +3193,7 @@ TanukiLib.Sections.Keybind = function(self, Data)
         Flag = Data.Flag or nil,
 
         Value = nil,
+        Class = "Keybind"
     }
 
     local Items = {}
@@ -3036,7 +3486,9 @@ TanukiLib.Sections.Dropdown = function(self, Data)
         Required = Data.Required or false,
         Callback = Data.Callback or function() end,
         Flag = Data.Flag or nil,
+        
         Value = nil,
+        Class = "Dropdown"
     }
 
     local Items = {}
@@ -3650,7 +4102,9 @@ TanukiLib.Sections.Colorpicker = function(self, Data)
         Callback = Data.Callback or function() end,
 
         Color = Data.Default or Color3.fromRGB(255, 255, 255),
+        
         Value = nil,
+        Class = "Colorpicker"
     }
 
     local isAlpha = Colorpicker.Alpha and true or false
@@ -4290,39 +4744,40 @@ TanukiLib.Sections.Colorpicker = function(self, Data)
         Parent = Items["BottomBar"],
     })
     
-    
-    Items["ColorRing"] = Create("ImageLabel", {
+   Items["ColorRing"] = Create("CanvasGroup", {
 	    Name = "ColorRing",
+		Size = UDim2.new(0, 60, 0, 28),
+	    Parent = Items["BottomBar"],
+	}) setThemed(Items["ColorRing"], "BackgroundColor3", "Surface")
+    Create("UICorner", { CornerRadius = UDim.new(0, 5), Parent = Items["ColorRing"] })
+	
+    Items["Grid"] = Create("ImageLabel", {
+	    Name = "Grid",
 	    Image = assets.grid,
 	    ScaleType = Enum.ScaleType.Tile,
-	    TileSize = UDim2.fromOffset(20, 20),
-	    Size = UDim2.new(0, 60, 0, 28),
-	    BackgroundTransparency = 1,
-	    ClipsDescendants = false,
-	    Parent = Items["BottomBar"],
-	})
-	Create("UICorner", { CornerRadius = UDim.new(0, 8), Parent = Items["ColorRing"] })
+	    TileSize = UDim2.fromOffset(500, 500),
+	    Size = UDim2.fromScale(1,1),
+		BackgroundTransparency = 1,
+	    Parent = Items["ColorRing"],
+	}) 
 	
-	Items["NewColorInner"] = Create("Frame", {
+	Items["NewColorInner"] = Create("ImageLabel", {
 	    Name = "NewColor",
 	    BorderSizePixel = 0,
-	    Size = UDim2.fromScale(0.6, 1), 
+	    Size = UDim2.fromScale(0.5, 1), 
 	    ZIndex = 2,
-	    Parent = Items["ColorRing"],
+	    Parent = Items["Grid"],
 	})
-	Create("UICorner", { CornerRadius = UDim.new(0, 8), Parent = Items["NewColorInner"] })
 	
-	Items["OldColorInner"] = Create("Frame", {
+	Items["OldColorInner"] = Create("ImageLabel", {
 	    Name = "OldColor",
 	    BorderSizePixel = 0,
-	    Position = UDim2.fromScale(0.4, 0),
-	    Size = UDim2.fromScale(0.6, 1),
+	    Position = UDim2.fromScale(0.5, 0),
+	    Size = UDim2.fromScale(0.5, 1),
 	    ZIndex = 1,
-	    Parent = Items["ColorRing"],
+	    Parent = Items["Grid"],
 	})
-	Create("UICorner", { CornerRadius = UDim.new(0, 8), Parent = Items["OldColorInner"] })
-
-
+	
     Items["Separator"] = Create("Frame", {
         Name = "Frame",
         Size = UDim2.new(0, 50, 0, 30),
@@ -4942,10 +5397,10 @@ TanukiLib.Sections.Label = function(self, Data)
     
     Items["UIPadding"] = Create("UIPadding", {
 	    Name = "UIPadding",
-	    PaddingBottom = UDim.new(0, 10),
+	    PaddingBottom = UDim.new(0, 4),
 	    PaddingLeft = UDim.new(0, 10),
 	    PaddingRight = UDim.new(0, 10),
-	    PaddingTop = UDim.new(0, 10),
+	    PaddingTop = UDim.new(0, 4),
 	    Parent = Items["Label"]
 	})
 
@@ -4954,7 +5409,7 @@ TanukiLib.Sections.Label = function(self, Data)
         FontFace = Font.new(assets.interFont, Label.Bold and Enum.FontWeight.Bold or Enum.FontWeight.Regular, Enum.FontStyle.Normal),
         RichText = true,
         Text = Label.Text,
-        TextSize = 13,
+        TextSize = 14,
         TextTransparency = 0.5,
         TextWrapped = true,
         TextXAlignment = Enum.TextXAlignment.Left,
@@ -5246,9 +5701,12 @@ TanukiLib.Dialog = function(self, Data)
                 Size = UDim2.fromScale(1, 0),
                 Parent = Items["Interactions"],
             })
-            setThemed(Button, "TextColor3", "Text")
-            setThemed(Button, "BackgroundColor3", "Accent")
+            setThemed(Button, "TextColor3", "Text")      
+			if not v.BackgroundColor then
+			    setThemed(Button, "BackgroundColor3", "Accent")
+			end
 
+            
             Create("UIPadding", {
                 Name = "UIPadding",
                 PaddingBottom = UDim.new(0, 9),
@@ -5327,6 +5785,7 @@ local Window = TanukiLib:Window({
     Name = "Fe All Emote",
     SubName = "Animations",
     Icon = "lucide/house",
+    ShowUserInfo = true,
 })
 
 local MainPage = Window:Page({ Name = "Main" })
@@ -5334,6 +5793,9 @@ local MainPage = Window:Page({ Name = "Main" })
 local Group = Window:PageGroup({})
 
 local Misc = Group:Page({ Name = "Miscellaneous", Icon = "lucide/house" })
+
+local Group2 = Window:PageGroup({Name = "Settings"})
+local Misc = Group2:Page({ Name = "Text", Icon = "lucide/house" })
 
 Window:Divider()
 
@@ -5348,26 +5810,28 @@ local SubSection = Misc:Section({
 MainSection:Header({ Name = "My Header Title" })
 
 MainSection:Button({
-    Name = "Switch theme to white",
+    Name = "Switch theme(Dialog)",
     Callback = function()
-        TanukiLib:Notify({
-		    Name = "Notification",
-		    Description = "Theme Switched",
-		    Duration = 5,
-		})
-		TanukiLib:SetTheme("Light")
-    end
-})
-
-MainSection:Button({
-    Name = "Switch theme to Dark",
-    Callback = function()
-        TanukiLib:Notify({
-		    Name = "Notification",
-		    Description = "Theme Switched",
-		    Duration = 5,
-		})
-		TanukiLib:SetTheme("Dark")
+		Window:Dialog({
+				Title = "wassap",
+				Description = "Choose",
+				Buttons = {
+					{
+						Name = "White",
+						Callback = function()
+							TanukiLib:SetTheme("Light")
+						end,
+					},
+					{
+						Name = "Dark",
+						BackgroundColor =  Color3.fromRGB(69,67,41),
+						Callback = function()
+							TanukiLib:SetTheme("Dark")
+						end,
+					}
+				}
+			})
+		
     end
 })
 
@@ -5384,6 +5848,7 @@ MainSection:Label({
 local Toggle = MainSection:Toggle({
     Name = "Enable Thing",
     Default = false,
+    Flag = "test",
     Callback = function(state)
         print("toggled:", state)
     end
@@ -5420,6 +5885,7 @@ MainSection:Input({
 MainSection:Keybind({
 	Name = "Keybind",
 	Blacklist = false,
+	Flag = "test2",
 	Callback = function(binded)
 		TanukiLib:Notify({
 			Title = "Demo Window",
@@ -5465,6 +5931,7 @@ local MultiDropdown = MainSection:Dropdown({
 	Required = false,
 	Options = optionTable,
 	Default = {"Apple", "Orange"},
+	Flag = "tes4",
 	Callback = function(Value)
 		local Values = {}
 		for Value, State in next, Value do
@@ -5516,6 +5983,8 @@ SubSection:Slider({
 	end,
 })
 
+Misc:InsertConfigSection()
+Window:SetUserInfoState("anon")
 MainPage:Select()
 end
 --Demo()
